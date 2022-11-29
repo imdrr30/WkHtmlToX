@@ -1,74 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
-using WkHtmlToPdf.Assets;
+using WkHtmlToX.Assets;
+using System.Diagnostics;
+using System;
 
-namespace WkHtmlToPdf
+
+namespace WkHtmlToX
 {
-    public class ScreenCapture
+    public class PDF
     {
 
-        public static string wkhtmltoimage;
+        public static string wkhtmltopdf;
         public static string workingDir;
         public bool streamOutput;
-        private static List<string> pngArgs;
+        private static List<string> pdfArgs;
 
-        public ScreenCapture(bool streamOutput = false)
+        public PDF(bool streamOutput=false)
         {
-            wkhtmltoimage = ConverterExecutable.Get("image").FullConverterExecutableFilename;
+            wkhtmltopdf = ConverterExecutable.Get().FullConverterExecutableFilename;
             workingDir = ConverterExecutable.GetWorkingDir();
-            pngArgs = new List<string>();
+            pdfArgs = new List<string>();
             this.streamOutput = streamOutput;
 
         }
         public void AddOption(string arg)
         {
 
-            pngArgs.Add(arg);
+            pdfArgs.Add(arg);
 
         }
-
+        
         public byte[] From(string htmlContent)
         {
 
             var tempFileName = Utilities.GetRandomString();
-            return CreatePNGFromHTML(htmlContent, tempFileName);
+            return CreatePDFFromHTML(htmlContent, tempFileName);
 
 
         }
-
+        
         private void CreateTempHTMLFile(string htmlContent, string fileName)
         {
+
             File.WriteAllText(fileName, htmlContent);
+
         }
 
         private void AddDefaultArguments()
         {
-
+            AddOption("--no-pdf-compression");
         }
 
-        private byte[] CreatePNGFromHTML(string htmlContent, string fileName)
+        private byte[] CreatePDFFromHTML(string htmlContent, string fileName)
 
         {
 
             var htmlLocation = Path.Combine(workingDir, fileName + ".html");
-            var pngLocation = Path.Combine(workingDir, fileName + ".png");
+            var pdfLocation = Path.Combine(workingDir, fileName + ".pdf");
 
             CreateTempHTMLFile(htmlContent, htmlLocation);
             AddDefaultArguments();
+                
             AddOption(htmlLocation);
-            AddOption(pngLocation);
-
+            AddOption(pdfLocation);
 
 
             StartConvertionProcess();
 
-            byte[] png = ReadPNG(pngLocation);
+            byte[] pdf = ReadPDF(pdfLocation);
 
-            DeleteTemporaryFiles(pngLocation, htmlLocation);
+            DeleteTemporaryFiles(pdfLocation, htmlLocation);
 
-            return png;
+            return pdf;
+
         }
 
         private void StartConvertionProcess()
@@ -87,9 +91,9 @@ namespace WkHtmlToPdf
 
         }
 
-        private static string GetCommandLineArguments()
+        private string GetCommandLineArguments()
         {
-            string args = string.Join(" ", pngArgs.ToArray());
+            string args =  string.Join(" ", pdfArgs.ToArray());
             return args;
         }
 
@@ -97,7 +101,7 @@ namespace WkHtmlToPdf
         {
             return new ProcessStartInfo
             {
-                FileName = wkhtmltoimage,
+                FileName = wkhtmltopdf,
                 Arguments = GetCommandLineArguments(),
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
@@ -106,26 +110,23 @@ namespace WkHtmlToPdf
             };
         }
 
-        private byte[] ReadPNG(string fileName)
+        private byte[] ReadPDF(string fileName)
         {
 
             return File.ReadAllBytes(fileName);
 
-
+            
         }
 
-        private void DeleteTemporaryFiles(string pngFile, string htmlFile)
+        private void DeleteTemporaryFiles(string pdfFile, string htmlFile)
         {
-
             DeleteFile(htmlFile);
-            DeleteFile(pngFile);
-
+            DeleteFile(pdfFile); 
         }
 
         private void DeleteFile(string fileName)
         {
             File.Delete(fileName);
-
         }
     }
 }

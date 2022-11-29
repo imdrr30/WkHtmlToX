@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace WkHtmlToPdf.Assets
+namespace WkHtmlToX.Assets
 {
     sealed class ConverterExecutable
     {

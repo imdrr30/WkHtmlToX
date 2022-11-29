@@ -1,7 +1,8 @@
-using WkHtmlToPdf;
+using WkHtmlToX;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
-namespace WkHtmlToPdf.Tests
+namespace WkHtmlToX.Tests
 {
     [TestClass]
     public class ScreenCaptureTests
