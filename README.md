@@ -1,5 +1,5 @@
-# WkHtmlToPdf Wrapper- Windows Only
-## Self-Managed PDF Generation from HTML using WkHtmlToX Engine
+# WkHtmlToX Wrapper- Windows Only
+## Self-Managed PDF and image Generation from HTML using WkHtmlToX Engine
 
 ### Usage For PDF Generation:
 ```
